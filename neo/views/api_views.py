@@ -16,15 +16,23 @@ def get_solar_system_models(request):
 
     models_data = [
         {
-            'name': 'Sun',
-            'obj_url': os.path.join(settings.MEDIA_URL, 'models/human.obj'),
+            'name': '433 Eros (A898 PA)',
+            'diameter': '16.84 km',
+            'absolute_magnitude_param': "10.41",
+            'magnitude_slope_param': "0.46",
+            'standard_gravitational_param': "4.463e-04 km^3/s^2",
+            'obj_url': os.path.join(settings.MEDIA_URL, 'models/Eros433.obj'),
             'size': 0.2,
             'position': {'x': -10, 'y': 0, 'z': 0}
         },
         {
-            'name': 'Mercury',
-            'obj_url': os.path.join(settings.MEDIA_URL, 'models/roma_model.obj'),
-            'size': 1,
+            'name': '433 Eros (A898 PA)',
+            'diameter': '16.84 km',
+            'absolute_magnitude_param': "10.41",
+            'magnitude_slope_param': "0.46",
+            'standard_gravitational_param': "4.463e-04 km^3/s^2",
+            'obj_url': os.path.join(settings.MEDIA_URL, 'models/Eros433-2.obj'),
+            'size': 0.2,
             'position': {'x': 10, 'y': 0, 'z': 0}
         },
         # {

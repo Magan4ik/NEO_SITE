@@ -1,10 +1,16 @@
 // Настройка сцены, камеры и рендера
+const container = document.getElementById('solarSystemContainer');
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setSize(container.clientWidth, container.clientHeight);
 
-document.getElementById('solarSystemContainer').appendChild(renderer.domElement);
+container.appendChild(renderer.domElement);
+
+const loader = new THREE.TextureLoader();
+loader.load('media/textures/bkg.jpeg', function (texture) {
+    scene.background = texture; // Устанавливаем текстуру как фон сцены
+});
 
 // Освещение в центре, как Солнце
 const light = new THREE.PointLight(0xffffff, 2, 1000);
@@ -12,7 +18,7 @@ light.position.set(0, 0, 0);  // Солнце в центре
 scene.add(light);
 
 // Позиция камеры
-camera.position.z = 50;  // Начальная позиция камеры
+camera.position.z = 20;  // Начальная позиция камеры
 
 // Создаем raycaster для отслеживания кликов
 const raycaster = new THREE.Raycaster();
@@ -29,6 +35,10 @@ function loadModels(data) {
     data.forEach(item => {
         objLoader.load(item.obj_url, function (object) {
             object.name = item.name;  // Сохраняем имя объекта для отображения
+            object.diameter = item.diameter
+            object.H = item.absolute_magnitude_param
+            object.G = item.magnitude_slope_param
+            object.GM = item.standard_gravitational_param
             object.scale.set(item.size, item.size, item.size);
             object.position.set(item.position.x, item.position.y, item.position.z);
             scene.add(object);
@@ -56,8 +66,8 @@ window.addEventListener('click', (event) => {
     if (isZoomedIn) return;  // Блокируем клики, если уже приближены к объекту
 
     // Определяем координаты клика мыши
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    mouse.x = (event.clientX / container.clientWidth) * 2 - 1;
+    mouse.y = -(event.clientY / container.clientHeight) * 2 + 1;
 
     // Используем raycaster для определения пересечения с объектами
     raycaster.setFromCamera(mouse, camera);
@@ -90,9 +100,15 @@ window.addEventListener('click', (event) => {
         controls.update();  // Обновляем controls
 
         // Обновляем направление камеры
-        camera.lookAt(clickedObject.position);
+        camera.lookAt(clickedObject.parent.position);
         // Отображаем информацию об объекте
-        document.getElementById('objectInfo').innerText = `Объект: ${clickedObject.name}`;
+        document.getElementById('objectInfo').innerHTML = `
+        Object: ${clickedObject.parent.name}<br>
+        Diameter: ${clickedObject.parent.diameter}<br>
+        Absolute magnitude param: ${clickedObject.parent.H}<br>
+        Magnitude slope param: ${clickedObject.parent.G}<br>
+        Standard gravitational param: ${clickedObject.parent.GM}<br>
+        `;
     }
 });
 
