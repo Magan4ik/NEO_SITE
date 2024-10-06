@@ -28,7 +28,7 @@ function loadModels(data) {
 
     data.forEach(item => {
         objLoader.load(item.obj_url, function (object) {
-            object.userData.name = item.name;  // Сохраняем имя объекта для отображения
+            object.name = item.name;  // Сохраняем имя объекта для отображения
             object.scale.set(item.size, item.size, item.size);
             object.position.set(item.position.x, item.position.y, item.position.z);
             scene.add(object);
@@ -68,8 +68,10 @@ window.addEventListener('click', (event) => {
         console.log(clickedObject);
 
         // Приближаем камеру к объекту
-        const targetPosition = clickedObject.position.clone();
-        targetPosition.z += 5;  // Увеличиваем расстояние камеры от объекта
+        const distance = 3;  // Расстояние от объекта до камеры
+        const direction = new THREE.Vector3();
+        direction.subVectors(camera.position, clickedObject.parent.position).normalize();  // Вычисляем направление от объекта к камере
+        const targetPosition = clickedObject.position.clone().add(direction.multiplyScalar(distance));  // Вычисляем новую позицию камеры
 
         // Анимация приближения
         gsap.to(camera.position, {
@@ -82,9 +84,15 @@ window.addEventListener('click', (event) => {
                 showZoomOutButton();
             }
         });
+        // Центрируем управление на выбранном объекте и устанавливаем направление камеры
+        console.log(clickedObject.position)
+        controls.target.copy(clickedObject.parent.position);  // Центрируем controls на выбранный объект
+        controls.update();  // Обновляем controls
 
+        // Обновляем направление камеры
+        camera.lookAt(clickedObject.position);
         // Отображаем информацию об объекте
-        document.getElementById('objectInfo').innerText = `Объект: ${clickedObject.userData.name}`;
+        document.getElementById('objectInfo').innerText = `Объект: ${clickedObject.name}`;
     }
 });
 
@@ -96,6 +104,7 @@ function showZoomOutButton() {
 
 // Обработка отдаления камеры
 document.getElementById('zoomOutButton').addEventListener('click', () => {
+    controls.target.copy(new THREE.Vector3(0, 0, 0));
     gsap.to(camera.position, {
         duration: 1,
         x: originalCameraPosition.x,

@@ -19,7 +19,7 @@ def get_solar_system_models(request):
             'name': 'Sun',
             'obj_url': os.path.join(settings.MEDIA_URL, 'models/human.obj'),
             'size': 0.2,
-            'position': {'x': 0, 'y': 0, 'z': 0}
+            'position': {'x': -10, 'y': 0, 'z': 0}
         },
         {
             'name': 'Mercury',
