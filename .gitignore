@@ -1,5 +1,6 @@
 /*/migrations/
 /venv/
 /.idea/
-/media/models/
+*.obj
+*.mtl
 */__pycache__/
